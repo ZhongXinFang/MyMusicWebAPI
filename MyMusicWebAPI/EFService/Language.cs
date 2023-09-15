@@ -3,15 +3,15 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyMusicWebAPI.EFService;
-[Comment("用户表")]
-[EntityTypeConfiguration(typeof(UserConfiguration))]
-public partial class User
+[Comment("语言字典")]
+[EntityTypeConfiguration(typeof(LanguageConfiguration))]
+public partial class Language
 {
     /// <summary>
     /// Id
     /// </summary>
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.None)]     // 禁用数据库自动生成
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public Guid Id { get; set; }
 
     /// <summary>
@@ -22,8 +22,7 @@ public partial class User
     /// <summary>
     /// 创建人
     /// </summary>
-    [ForeignKey(nameof(CreatebyUser))]
-    public Guid? CreatebyUserId { get; set; }
+    public Guid CreatebyUserId { get; set; }
 
     /// <summary>
     /// 创建时间
@@ -33,7 +32,7 @@ public partial class User
     /// <summary>
     /// 更新人
     /// </summary>
-    public Guid? UpdatebyUserId { get; set; }
+    public Guid UpdatebyUserId { get; set; }
 
     /// <summary>
     /// 更新时间
@@ -41,18 +40,10 @@ public partial class User
     public DateTime Updatetime { get; set; }
 
     /// <summary>
-    /// 用户名称
+    /// 语言描述（简体中文，English，한국어，...）
     /// </summary>
-    [MaxLength(50)]
-    public string Name { get; set; } = null!;
+    public string Languagedescription { get; set; } = null!;
 
-    /// <summary>
-    /// 密码指纹
-    /// </summary>
-    [MaxLength(500)]
-    [Unicode(false)]
-    public string Password { get; set; } = null!;
-
-    public User? CreatebyUser { get; set; }
-    public User? UpdatebyUser { get; set; }
+    public User CreatebyUser { get; set; } = null!;
+    public User UpdatebyUser { get; set; } = null!;
 }

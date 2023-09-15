@@ -7,11 +7,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+// Add EF Core services to the services container.
 builder.Services.AddDbContext<DBContext>(
     options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnection"))
     );
+
+// Add AutoMapper services.
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
@@ -21,7 +24,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// 暂时不启用 HTTPS
+// 暂时不启用 HTTPS.
 //app.UseHttpsRedirection();
 
 app.UseAuthorization();
