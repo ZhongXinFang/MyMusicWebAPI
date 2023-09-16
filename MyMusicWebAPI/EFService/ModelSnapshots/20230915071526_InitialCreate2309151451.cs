@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -19,18 +18,18 @@ namespace MyMusicWebAPI.EFService.ModelSnapshots
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Revision = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatebyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Createtime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatebyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Updatetime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Password = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Revision = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    CreatebyUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: true),
+                    Createtime = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    UpdatebyUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: true),
+                    Updatetime = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)",maxLength: 50,nullable: false),
+                    Password = table.Column<string>(type: "varchar(500)",unicode: false,maxLength: 500,nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_User",x => x.Id);
                     table.ForeignKey(
                         name: "FK_User_User_CreatebyUserId",
                         column: x => x.CreatebyUserId,
@@ -51,18 +50,18 @@ namespace MyMusicWebAPI.EFService.ModelSnapshots
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Revision = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatebyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Createtime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatebyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Updatetime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Countrydescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Countrycode = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Revision = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    CreatebyUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Createtime = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    UpdatebyUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Updatetime = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    Countrydescription = table.Column<string>(type: "nvarchar(max)",nullable: false),
+                    Countrycode = table.Column<string>(type: "nvarchar(max)",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Country", x => x.Id);
+                    table.PrimaryKey("PK_Country",x => x.Id);
                     table.ForeignKey(
                         name: "FK_Country_User_CreatebyUserId",
                         column: x => x.CreatebyUserId,
@@ -83,17 +82,17 @@ namespace MyMusicWebAPI.EFService.ModelSnapshots
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Revision = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatebyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Createtime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatebyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Updatetime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Languagedescription = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Revision = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    CreatebyUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Createtime = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    UpdatebyUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Updatetime = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    Languagedescription = table.Column<string>(type: "nvarchar(max)",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Language", x => x.Id);
+                    table.PrimaryKey("PK_Language",x => x.Id);
                     table.ForeignKey(
                         name: "FK_Language_User_CreatebyUserId",
                         column: x => x.CreatebyUserId,
@@ -114,24 +113,24 @@ namespace MyMusicWebAPI.EFService.ModelSnapshots
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Revision = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatebyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Createtime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatebyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Updatetime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Firstname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Lastname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Fullname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Dateofbirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CountryofbirthCountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NationalityCountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Gender = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Revision = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    CreatebyUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Createtime = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    UpdatebyUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Updatetime = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    Firstname = table.Column<string>(type: "nvarchar(max)",nullable: false),
+                    Lastname = table.Column<string>(type: "nvarchar(max)",nullable: false),
+                    Fullname = table.Column<string>(type: "nvarchar(max)",nullable: false),
+                    Dateofbirth = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    CountryofbirthCountryId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    NationalityCountryId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Gender = table.Column<int>(type: "int",nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Artist", x => x.Id);
+                    table.PrimaryKey("PK_Artist",x => x.Id);
                     table.ForeignKey(
                         name: "FK_Artist_Country_CountryofbirthCountryId",
                         column: x => x.CountryofbirthCountryId,
@@ -164,18 +163,18 @@ namespace MyMusicWebAPI.EFService.ModelSnapshots
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Revision = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatebyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Createtime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatebyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Updatetime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LyricistUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Revision = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    CreatebyUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Createtime = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    UpdatebyUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Updatetime = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    LyricistUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uniqueidentifier",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Lyric", x => x.Id);
+                    table.PrimaryKey("PK_Lyric",x => x.Id);
                     table.ForeignKey(
                         name: "FK_Lyric_Language_LanguageId",
                         column: x => x.LanguageId,
@@ -208,25 +207,25 @@ namespace MyMusicWebAPI.EFService.ModelSnapshots
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Revision = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatebyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Createtime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatebyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Updatetime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    ArtistId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Album = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Publicationdate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ComposerArtistId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LyricistArtistId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Coverimgjson = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    Backgroundimgjson = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    Audiofilesjson = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Revision = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    CreatebyUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Createtime = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    UpdatebyUserId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Updatetime = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(100)",maxLength: 100,nullable: false),
+                    ArtistId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Album = table.Column<string>(type: "nvarchar(100)",maxLength: 100,nullable: false),
+                    Publicationdate = table.Column<DateTime>(type: "datetime2",nullable: false),
+                    ComposerArtistId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    LyricistArtistId = table.Column<Guid>(type: "uniqueidentifier",nullable: false),
+                    Coverimgjson = table.Column<string>(type: "nvarchar(1000)",maxLength: 1000,nullable: false),
+                    Backgroundimgjson = table.Column<string>(type: "nvarchar(1000)",maxLength: 1000,nullable: false),
+                    Audiofilesjson = table.Column<string>(type: "nvarchar(1000)",maxLength: 1000,nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Song", x => x.Id);
+                    table.PrimaryKey("PK_Song",x => x.Id);
                     table.ForeignKey(
                         name: "FK_Song_Artist_ArtistId",
                         column: x => x.ArtistId,

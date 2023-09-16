@@ -45,6 +45,8 @@ public partial class User
     /// </summary>
     [MaxLength(50)]
     public string Name { get; set; } = null!;
+    [MaxLength(100)]
+    public string Email { get; set; } = null!;
 
     /// <summary>
     /// 密码指纹
