@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MyMusicWebAPI.Dto;
 
 namespace MyMusicWebAPI.EFService;
 
@@ -6,6 +7,6 @@ public class UserProfile : Profile
 {
     public UserProfile()
     {
-        CreateMap<Models.CreateUserModel,EFService.User>();
+        CreateMap<RegistserInDto,EFService.User>();
     }
 }

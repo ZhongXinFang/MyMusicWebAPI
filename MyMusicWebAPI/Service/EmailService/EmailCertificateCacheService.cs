@@ -1,4 +1,5 @@
 ﻿using Ansely.Email;
+using MyMusicWebAPI.Service.EmailService;
 
 namespace MyMusicWebAPI.Service;
 
@@ -12,7 +13,7 @@ public partial class EmailCertificateCacheService : IEmailCertificateCacheServic
         mEmailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
     }
 
-    public async Task<string?> ObtainCodeAsync(string email)
+    public async Task<string?> ObtainCodeAsync(string email,string? id = null)
     {
         string code = new Random().Next(100000,999999).ToString();
         string body = $"你的验证码是 {code} 五分钟内有效，保护账号安全，请勿转发验证码给他人";
@@ -28,7 +29,7 @@ public partial class EmailCertificateCacheService : IEmailCertificateCacheServic
             {
                 CacheInfos.RemoveAll(x => x.Email == email);
             }
-            CacheInfos.Add(new EmailCertificateCacheInfo { Certificate = code,Email = email });
+            CacheInfos.Add(new EmailCertificateCacheInfo { Certificate = code,Email = email,Id = id });
             return code;
         }
         else
@@ -41,12 +42,14 @@ public partial class EmailCertificateCacheService : IEmailCertificateCacheServic
         }
     }
 
-    public bool VerifyCache(string certificate,string email)
+    public bool VerifyCache(string certificate,string email,string? id = null)
     {
         CacheInfos = CacheInfos.Where(static x => new TimeSpan(DateTime.Now.Ticks - x.Time.Ticks).TotalMinutes < 5.0).ToList();
         if (CacheInfos.Count > 0)
         {
-            var res = CacheInfos.FirstOrDefault(x => x.Certificate == certificate && x.Email == email);
+            var res = CacheInfos
+                .Where(x => x.Certificate == certificate && x.Email == email)
+                .FirstOrDefault(x => id is null || (id is not null) && x?.Id?.ToLower() == id.ToLower());
             if (res is not null)
             {
                 CacheInfos.Remove(res);

@@ -1,6 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MyMusicWebAPI;
 using MyMusicWebAPI.EFService;
 using MyMusicWebAPI.Service;
+using MyMusicWebAPI.Service.EmailService;
+using MyMusicWebAPI.Service.PSAService;
+using MyMusicWebAPI.Service.RSAPasswordService;
 using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +28,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IEmailCertificateCacheService,EmailCertificateCacheService>();
+builder.Services.AddTransient<IPasswordEncryptionService,PasswordEncryptionService>();
+builder.Services.AddTransient<IRSAServiceDependencyInjection,RSAServiceDependencyInjection>();
 
 // Add EF Core services to the services container.
 builder.Services.AddDbContext<DBContext>(
@@ -33,6 +39,17 @@ builder.Services.AddDbContext<DBContext>(
 
 // Add AutoMapper services.
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// CORS Config
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAny",builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -46,6 +63,8 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors("AllowAny");
 
 app.MapControllers();
 
