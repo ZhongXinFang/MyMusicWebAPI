@@ -1,11 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MyMusicWebAPI;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MyMusicWebAPI.EFService;
 using MyMusicWebAPI.Service;
 using MyMusicWebAPI.Service.EmailService;
+using MyMusicWebAPI.Service.JwtService;
 using MyMusicWebAPI.Service.PSAService;
+using MyMusicWebAPI.Service.PSAService.BouncyCastleService;
 using MyMusicWebAPI.Service.RSAPasswordService;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +24,7 @@ builder.Services.AddEmailSender(options =>
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
  {
-     //options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
      options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
      options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
      options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -28,8 +33,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IEmailCertificateCacheService,EmailCertificateCacheService>();
-builder.Services.AddTransient<IPasswordEncryptionService,PasswordEncryptionService>();
-builder.Services.AddTransient<IRSAServiceDependencyInjection,RSAServiceDependencyInjection>();
+builder.Services.AddSingleton<IPasswordEncryptionService,PasswordEncryptionService>();
+builder.Services.AddSingleton<IRSAServiceDependencyInjection,RSAPemServiceDependencyInjection>();
 
 // Add EF Core services to the services container.
 builder.Services.AddDbContext<DBContext>(
@@ -47,9 +52,32 @@ builder.Services.AddCors(options =>
     {
         builder.AllowAnyOrigin()
                .AllowAnyMethod()
-               .AllowAnyHeader();
+               .AllowAnyHeader()
+               .WithExposedHeaders("AuthorizationToken");
     });
 });
+
+// 添加身份验证服务
+JwtCondig.SetJwtCondigToDI(builder.Configuration);
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = JwtCondig.Issuer,
+        ValidAudience = JwtCondig.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtCondig.Key))
+    };
+});
+builder.Services.AddSingleton<IJwtService,JwtService>();
 
 var app = builder.Build();
 
@@ -62,9 +90,11 @@ if (app.Environment.IsDevelopment())
 // 暂时不启用 HTTPS.
 //app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.UseCors("AllowAny");
+
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapControllers();
 

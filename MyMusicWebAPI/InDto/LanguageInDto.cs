@@ -2,8 +2,8 @@
 
 namespace MyMusicWebAPI.InDto;
 
-public class AccountVerificationInDto
+public class LanguageInDto
 {
     [Required]
-    public string Email { get; set; } = null!;
+    public string Languagedescription { get; set; } = null!;
 }

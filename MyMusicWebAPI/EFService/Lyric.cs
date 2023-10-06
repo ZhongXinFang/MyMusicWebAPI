@@ -14,6 +14,7 @@ public partial class Lyric
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
 
     public Guid Id { get; set; }
+    public Guid SongId { get; set; }
 
     /// <summary>
     /// 乐观锁
@@ -33,12 +34,12 @@ public partial class Lyric
     /// <summary>
     /// 更新人
     /// </summary>
-    public Guid UpdatebyUserId { get; set; }
+    public Guid? UpdatebyUserId { get; set; }
 
     /// <summary>
     /// 更新时间
     /// </summary>
-    public DateTime Updatetime { get; set; }
+    public DateTime? Updatetime { get; set; }
 
     /// <summary>
     /// 作词人（歌词翻译或者改变，此字段非歌曲的作词人，而是歌词文件的创作者）
@@ -49,7 +50,13 @@ public partial class Lyric
     /// 歌词的主要语言（外键）
     /// </summary>
     public Guid LanguageId { get; set; }
+    /// <summary>
+    /// 歌词文件【Json】
+    /// </summary>
+    [MaxLength(1000)]
+    public string Lyricfilesjson { get; set; } = null!;
 
+    public Song Song { get; set; } = null!;
     public User CreatebyUser { get; set; } = null!;
     public User UpdatebyUser { get; set; } = null!;
     public User LyricistUser { get; set; } = null!;

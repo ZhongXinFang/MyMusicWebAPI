@@ -32,12 +32,12 @@ public partial class Song
     /// <summary>
     /// 更新人（外键）
     /// </summary>
-    public Guid UpdatebyUserId { get; set; }
+    public Guid? UpdatebyUserId { get; set; }
 
     /// <summary>
     /// 更新时间
     /// </summary>
-    public DateTime Updatetime { get; set; }
+    public DateTime? Updatetime { get; set; }
 
     /// <summary>
     /// 歌曲名称
@@ -55,6 +55,11 @@ public partial class Song
     /// </summary>
     [MaxLength(100)]
     public string Album { get; set; } = null!;
+
+    /// <summary>
+    /// 歌曲长度(毫秒)
+    /// </summary>
+    public int Duration { get; set; }
 
     /// <summary>
     /// 发布日期
@@ -94,4 +99,6 @@ public partial class Song
     public Artist Artist { get; set; } = null!;
     public Artist ComposerArtist { get; set; } = null!;
     public Artist LyricistArtist { get; set; } = null!;
+
+    public ICollection<Lyric> Lyrics { get; set; } = null!;
 }

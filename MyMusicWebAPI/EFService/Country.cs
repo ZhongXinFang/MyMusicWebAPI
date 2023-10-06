@@ -32,12 +32,12 @@ public partial class Country
     /// <summary>
     /// 更新人
     /// </summary>
-    public Guid UpdatebyUserId { get; set; }
+    public Guid? UpdatebyUserId { get; set; }
 
     /// <summary>
     /// 更新时间
     /// </summary>
-    public DateTime Updatetime { get; set; }
+    public DateTime? Updatetime { get; set; }
 
     /// <summary>
     /// 国家描述

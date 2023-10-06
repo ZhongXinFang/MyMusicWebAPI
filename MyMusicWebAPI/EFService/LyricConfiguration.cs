@@ -29,5 +29,11 @@ public class LyricConfiguration : IEntityTypeConfiguration<Lyric>
             .WithMany()
             .HasForeignKey(c => c.LanguageId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder
+            .HasOne(c => c.Song)
+            .WithMany(s => s.Lyrics)
+            .HasForeignKey(c => c.SongId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

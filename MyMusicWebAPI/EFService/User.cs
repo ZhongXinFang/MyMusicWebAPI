@@ -38,7 +38,7 @@ public partial class User
     /// <summary>
     /// 更新时间
     /// </summary>
-    public DateTime Updatetime { get; set; }
+    public DateTime? Updatetime { get; set; }
 
     /// <summary>
     /// 用户名称

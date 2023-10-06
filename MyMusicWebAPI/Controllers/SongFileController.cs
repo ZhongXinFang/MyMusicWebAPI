@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyMusicWebAPI.Service.FileService;
 using MyMusicWebAPI.Tools;
 
 namespace MyMusicWebAPI.Controllers;
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class SongFileController : ControllerBase
 {
@@ -28,14 +30,14 @@ public class SongFileController : ControllerBase
             if (SongFileName.IsNullOrWhiteSpace())
                 return BadRequest("未指定文件名");
             if (!System.IO.File.Exists(Path.Combine(AppPathSettings.SongFileSaveDirectory,SongFileName)))
-                return NotFound("文件不存在");
+                return BadRequest("文件不存在");
             return PhysicalFile(Path.Combine(AppPathSettings.SongFileSaveDirectory,SongFileName),"application/octet-stream",enableRangeProcessing: false);
         }
         catch (Exception ex)
         {
             if (ex is APInterfaceException)
                 return BadRequest(ex.Message);
-            return NotFound(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 }

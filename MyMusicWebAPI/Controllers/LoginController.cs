@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyMusicWebAPI.Dto;
@@ -6,6 +7,7 @@ using MyMusicWebAPI.EFService;
 using MyMusicWebAPI.InDto;
 using MyMusicWebAPI.OutDto;
 using MyMusicWebAPI.Service.EmailService;
+using MyMusicWebAPI.Service.JwtService;
 using MyMusicWebAPI.Service.PSAService;
 using MyMusicWebAPI.Service.RSAPasswordService;
 using MyMusicWebAPI.Tools;
@@ -20,18 +22,21 @@ public class LoginController : ControllerBase
     private readonly IEmailCertificateCacheService mEmailCertificateCacheService;
     private readonly IPasswordEncryptionService mPasswordEncryptionService;
     private readonly IRSAServiceDependencyInjection mRSAService;
+    private readonly IJwtService mJwtService;
 
     public LoginController(DBContext dbContext,
         IMapper mapper,
         IEmailCertificateCacheService emailCertificateCacheService,
         IPasswordEncryptionService passwordEncryptionService,
-        IRSAServiceDependencyInjection rSAService)
+        IRSAServiceDependencyInjection rSAService,
+        IJwtService jwtService)
     {
         mDbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         mMapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         mEmailCertificateCacheService = emailCertificateCacheService ?? throw new ArgumentNullException(nameof(emailCertificateCacheService));
         mPasswordEncryptionService = passwordEncryptionService ?? throw new ArgumentNullException(nameof(passwordEncryptionService));
         mRSAService = rSAService ?? throw new ArgumentNullException(nameof(rSAService));
+        mJwtService = jwtService ?? throw new ArgumentNullException(nameof(jwtService));
     }
 
     /// <summary>
@@ -52,7 +57,7 @@ public class LoginController : ControllerBase
             var res = new AccountVerificationOutDto
             {
                 Email = model.Email,
-                RSAPublicXmlString = mRSAService.PublicKeyXmlStr
+                RSAPublicString = mRSAService.PublicKeyStr
             };
 
             return Ok(res);
@@ -61,7 +66,7 @@ public class LoginController : ControllerBase
         {
             if (ex is APInterfaceException)
                 return BadRequest(ex.Message);
-            return NotFound(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
@@ -84,20 +89,25 @@ public class LoginController : ControllerBase
             if (res is null)
                 return BadRequest("账号不存在");
 
-            var password = mRSAService.DecryptData(res.Password);
-            if (password is null)
-                return BadRequest("密文有误，请检测网络是否安全");
+            //var password = mRSAService.DecryptData(loginModel.Password);
+            //if (password is null)
+            //    return BadRequest("密文有误，请检测网络是否安全");
 
-            if (!mPasswordEncryptionService.VerifyPassword(password,res.Password))
-                return BadRequest("密码错误");
+            //if (!mPasswordEncryptionService.VerifyPassword(password,res.Password))
+            //    return BadRequest("密码错误");
 
+            Response.Headers.Add("AuthorizationToken",mJwtService.BuildToken(new JwtSubjectModel
+            {
+                UserId = res.Id
+            }));
+            Response.Headers.Add("Access-Control-Expose-Headers","AuthorizationToken");
             return NoContent();
         }
         catch (Exception ex)
         {
             if (ex is APInterfaceException)
                 return BadRequest(ex.Message);
-            return NotFound(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
@@ -107,6 +117,7 @@ public class LoginController : ControllerBase
     /// <param name="loginModel"></param>
     /// <returns></returns>
     /// <exception cref="APInterfaceException"></exception>
+    [Authorize]
     [HttpPost("LoginFromEmail")]
     public async Task<IActionResult> LoginFromEmail(LoginFromEmailInDto loginModel)
     {
@@ -129,7 +140,7 @@ public class LoginController : ControllerBase
         {
             if (ex is APInterfaceException)
                 return BadRequest(ex.Message);
-            return NotFound(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
@@ -180,7 +191,7 @@ public class LoginController : ControllerBase
         {
             if (ex is APInterfaceException)
                 return BadRequest(ex.Message);
-            return NotFound(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
@@ -206,7 +217,18 @@ public class LoginController : ControllerBase
         {
             if (ex is APInterfaceException)
                 return BadRequest(ex.Message);
-            return NotFound(ex.Message);
+            return BadRequest(ex.Message);
         }
+    }
+
+    /// <summary>
+    /// 验证 token 是否有效
+    /// </summary>
+    /// <returns></returns>
+    [Authorize]
+    [HttpPost("Authorize")]
+    public  IActionResult Authorize()
+    {
+        return NoContent();
     }
 }
