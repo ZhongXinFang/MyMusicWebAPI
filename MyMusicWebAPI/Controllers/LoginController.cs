@@ -89,12 +89,12 @@ public class LoginController : ControllerBase
             if (res is null)
                 return BadRequest("账号不存在");
 
-            //var password = mRSAService.DecryptData(loginModel.Password);
-            //if (password is null)
-            //    return BadRequest("密文有误，请检测网络是否安全");
+            var password = mRSAService.DecryptData(loginModel.Password);
+            if (password is null)
+                return BadRequest("密文有误，请检测网络是否安全");
 
-            //if (!mPasswordEncryptionService.VerifyPassword(password,res.Password))
-            //    return BadRequest("密码错误");
+            if (!mPasswordEncryptionService.VerifyPassword(password,res.Password))
+                return BadRequest("密码错误");
 
             Response.Headers.Add("AuthorizationToken",mJwtService.BuildToken(new JwtSubjectModel
             {
@@ -117,7 +117,6 @@ public class LoginController : ControllerBase
     /// <param name="loginModel"></param>
     /// <returns></returns>
     /// <exception cref="APInterfaceException"></exception>
-    [Authorize]
     [HttpPost("LoginFromEmail")]
     public async Task<IActionResult> LoginFromEmail(LoginFromEmailInDto loginModel)
     {
@@ -132,8 +131,14 @@ public class LoginController : ControllerBase
             var res = await mDbContext.User.FirstOrDefaultAsync(x => x.Email == loginModel.Email);
             if (res is null)
                 return BadRequest("账号不存在");
-            if (!mEmailCertificateCacheService.VerifyCache(loginModel.VerificationCode,loginModel.Email,id: CodeEnum.Login.ToString()))
+            if (!mEmailCertificateCacheService.VerifyCache(loginModel.VerificationCode.Trim(),loginModel.Email,id: CodeEnum.Login.ToString()))
                 return BadRequest("验证码无效");
+
+            Response.Headers.Add("AuthorizationToken",mJwtService.BuildToken(new JwtSubjectModel
+            {
+                UserId = res.Id
+            }));
+            Response.Headers.Add("Access-Control-Expose-Headers","AuthorizationToken");
             return NoContent();
         }
         catch (Exception ex)
@@ -168,7 +173,7 @@ public class LoginController : ControllerBase
             var res = await mDbContext.User.FirstOrDefaultAsync(x => x.Email == user.Email);
             if (res is not null)
                 return BadRequest("账号已存在");
-            if (!mEmailCertificateCacheService.VerifyCache(user.VerificationCode,user.Email,id: CodeEnum.Register.ToString()))
+            if (!mEmailCertificateCacheService.VerifyCache(user.VerificationCode.Trim(),user.Email,id: CodeEnum.Register.ToString()))
                 return BadRequest("验证码无效");
 
             var password = mRSAService.DecryptData(user.Password);
@@ -200,18 +205,22 @@ public class LoginController : ControllerBase
     /// </summary>
     /// <param name="email"></param>
     /// <returns></returns>
-    [HttpGet("GetVerificationCode")]
-    public async Task<IActionResult> GetVerificationCode(string email,CodeEnum codeEnum)
+    [HttpPost("GetVerificationCode")]
+    public async Task<IActionResult> GetVerificationCode(GetVerificationCodeInDto dto)
     {
         try
         {
-            var res = await mEmailCertificateCacheService.ObtainCodeAsync(email,id: codeEnum.ToString());
+            if (dto.CodeEnum == CodeEnum.none)
+                return BadRequest("验证码类型错误");
+            var user = await mDbContext.User.FirstOrDefaultAsync(x => x.Email == dto.Email);
+            if (user is null && dto.CodeEnum == CodeEnum.Login)
+                return BadRequest("账号不存在");
+            else if(user is not null && dto.CodeEnum == CodeEnum.Register)
+                return BadRequest("账号已存在");
+            var res = await mEmailCertificateCacheService.ObtainCodeAsync(dto.Email,id: dto.CodeEnum.ToString());
             if (res is null)
                 return BadRequest("验证码发送失败");
-            return Ok(new
-            {
-                VerificationCode = res
-            });
+            return NoContent();
         }
         catch (Exception ex)
         {
@@ -227,7 +236,7 @@ public class LoginController : ControllerBase
     /// <returns></returns>
     [Authorize]
     [HttpPost("Authorize")]
-    public  IActionResult Authorize()
+    public IActionResult Authorize()
     {
         return NoContent();
     }

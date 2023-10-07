@@ -24,7 +24,7 @@ public class RSAServiceDependencyInjection : IRSAServiceDependencyInjection
             using RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
             rsa.FromXmlString(PrivateKeyStr);
             byte[] data = Encoding.UTF8.GetBytes(rdata);
-            byte[] encryptedData = rsa.Encrypt(data, false);
+            byte[] encryptedData = rsa.Encrypt(data,false);
             encryptedString = Convert.ToBase64String(encryptedData);
         }
         catch (Exception) { }
@@ -39,7 +39,7 @@ public class RSAServiceDependencyInjection : IRSAServiceDependencyInjection
             using RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
             rsa.FromXmlString(PrivateKeyStr);
             byte[] encryptedData = Convert.FromBase64String(encryptedString);
-            byte[] decryptedData = rsa.Decrypt(encryptedData, false);
+            byte[] decryptedData = rsa.Decrypt(encryptedData,false);
             decryptedString = Encoding.UTF8.GetString(decryptedData);
             return decryptedString;
         }

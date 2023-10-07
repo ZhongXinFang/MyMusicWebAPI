@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -171,7 +170,7 @@ namespace MyMusicWebAPI.EFService.ModelSnapshots
                 table: "User",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                defaultValue: new DateTime(1,1,1,0,0,0,0,DateTimeKind.Unspecified),
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2",
                 oldNullable: true);
@@ -182,7 +181,7 @@ namespace MyMusicWebAPI.EFService.ModelSnapshots
                 table: "Song",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                defaultValue: new DateTime(1,1,1,0,0,0,0,DateTimeKind.Unspecified),
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2",
                 oldNullable: true);
@@ -204,7 +203,7 @@ namespace MyMusicWebAPI.EFService.ModelSnapshots
                 table: "Lyric",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                defaultValue: new DateTime(1,1,1,0,0,0,0,DateTimeKind.Unspecified),
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2",
                 oldNullable: true);
@@ -226,7 +225,7 @@ namespace MyMusicWebAPI.EFService.ModelSnapshots
                 table: "Language",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                defaultValue: new DateTime(1,1,1,0,0,0,0,DateTimeKind.Unspecified),
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2",
                 oldNullable: true);
@@ -248,7 +247,7 @@ namespace MyMusicWebAPI.EFService.ModelSnapshots
                 table: "Country",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                defaultValue: new DateTime(1,1,1,0,0,0,0,DateTimeKind.Unspecified),
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2",
                 oldNullable: true);
@@ -270,7 +269,7 @@ namespace MyMusicWebAPI.EFService.ModelSnapshots
                 table: "Artist",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                defaultValue: new DateTime(1,1,1,0,0,0,0,DateTimeKind.Unspecified),
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2",
                 oldNullable: true);

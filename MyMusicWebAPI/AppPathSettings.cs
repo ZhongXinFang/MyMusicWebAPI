@@ -12,11 +12,11 @@ public static class AppPathSettings
     /// <summary>
     /// 歌曲文件处理目录
     /// </summary>
-    public static string SongFileTempDirectory { get; set; } = Path.Combine(AppBaseDirectory,"SongFileTemp");
+    public static string SongFileTempDirectory { get; set; } = Path.Combine(AppBaseDirectory,"wwwRoot","SongFileTemp");
     /// <summary>
     /// 歌曲文件保持目录
     /// </summary>
-    public static string SongFileSaveDirectory { get; set; } = Path.Combine(AppBaseDirectory,"SongFile");
+    public static string SongFileSaveDirectory { get; set; } = Path.Combine(AppBaseDirectory,"wwwRoot","SongFile");
     #endregion
 
 }

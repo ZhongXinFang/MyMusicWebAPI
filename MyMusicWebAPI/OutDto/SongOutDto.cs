@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace MyMusicWebAPI.OutDto;
+﻿namespace MyMusicWebAPI.OutDto;
 
 public class SongOutDto
 {
@@ -14,6 +12,7 @@ public class SongOutDto
     /// 歌手
     /// </summary>
     public Guid ArtistId { get; set; }
+    public string ArtistName { get; set; } = null!;
 
     /// <summary>
     /// 专辑
@@ -28,13 +27,14 @@ public class SongOutDto
     /// <summary>
     /// 作曲家
     /// </summary>
-    [Required]
     public Guid ComposerArtistId { get; set; }
+    public string ComposerArtistName { get; set; } = null!;
 
     /// <summary>
     /// 作词家
     /// </summary>
     public Guid LyricistArtistId { get; set; }
+    public string LyricistArtistName { get; set; } = null!;
 
     /// <summary>
     /// 歌曲封面【Json】

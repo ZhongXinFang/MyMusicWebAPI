@@ -71,25 +71,50 @@ public class SongController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetSongs()
+    public async Task<IActionResult> GetSongs([FromQuery] SearchInDto searchDto)
     {
         try
         {
-            var res = await mDbContext.Song.Select(x => new SongOutDto
+            var queryExpression = mDbContext.Song.AsQueryable();
+
+            if (searchDto.Q.IsNotNullOrEmpty())
+            {
+                queryExpression = queryExpression.Where(x => x.Title.Contains(searchDto.Q.Trim()));
+            }
+
+            var count = await queryExpression.CountAsync();
+
+            queryExpression = queryExpression
+                .OrderBy(x => x.Id)
+                .Skip((searchDto.Page - 1) * searchDto.PageSize)
+                .Take(searchDto.PageSize);
+
+            var res = await queryExpression.Select(x => new SongOutDto
             {
                 Title = x.Title,
                 Id = x.Id,
                 ArtistId = x.ArtistId,
+                ArtistName = x.Artist.Fullname,
                 Album = x.Album,
                 Publicationdate = x.Publicationdate,
                 ComposerArtistId = x.ComposerArtistId,
+                ComposerArtistName = x.ComposerArtist.Fullname,
                 LyricistArtistId = x.LyricistArtistId,
+                LyricistArtistName = x.LyricistArtist.Fullname,
                 Coverimgjson = x.Coverimgjson,
                 Backgroundimgjson = x.Backgroundimgjson,
                 Audiofilesjson = x.Audiofilesjson,
                 Lyricfilesjson = x.Lyrics.First().Lyricfilesjson         // 暂时支持一个歌词文件
             }).ToListAsync();
-            return Ok(res);
+
+            if (!res.Any())
+                return NoContent();
+            return Ok(new SongOutListDto<SongOutDto>(
+                count,
+                searchDto.Page,
+                (int)Math.Ceiling(count / (double)searchDto.PageSize),
+                searchDto.PageSize,
+                res));
         }
         catch (Exception ex)
         {
@@ -107,19 +132,19 @@ public class SongController : ControllerBase
             var res = await mDbContext.Song
                 .Where(x => x.Id == songId)
                 .Select(x => new SongOutDto
-            {
-                Title = x.Title,
-                Id = x.Id,
-                ArtistId = x.ArtistId,
-                Album = x.Album,
-                Publicationdate = x.Publicationdate,
-                ComposerArtistId = x.ComposerArtistId,
-                LyricistArtistId = x.LyricistArtistId,
-                Coverimgjson = x.Coverimgjson,
-                Backgroundimgjson = x.Backgroundimgjson,
-                Audiofilesjson = x.Audiofilesjson,
-                Lyricfilesjson = x.Lyrics.First().Lyricfilesjson         // 暂时支持一个歌词文件
-            }).FirstOrDefaultAsync();
+                {
+                    Title = x.Title,
+                    Id = x.Id,
+                    ArtistId = x.ArtistId,
+                    Album = x.Album,
+                    Publicationdate = x.Publicationdate,
+                    ComposerArtistId = x.ComposerArtistId,
+                    LyricistArtistId = x.LyricistArtistId,
+                    Coverimgjson = x.Coverimgjson,
+                    Backgroundimgjson = x.Backgroundimgjson,
+                    Audiofilesjson = x.Audiofilesjson,
+                    Lyricfilesjson = x.Lyrics.First().Lyricfilesjson         // 暂时支持一个歌词文件
+                }).FirstOrDefaultAsync();
             if (res is null)
                 return NoContent();
             return Ok(res);

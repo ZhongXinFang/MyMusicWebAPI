@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using MyMusicWebAPI.EFService;
 using MyMusicWebAPI.Service;
@@ -14,7 +17,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add EmailSender services to the container.
+// 注册 EF Core 服务
+builder.Services.AddDbContext<DBContext>(
+    options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnection"))
+);
+
+// 注册邮件服务
 builder.Services.AddEmailSender(options =>
 {
     options.Host = builder.Configuration["Email:Host"];
@@ -22,11 +31,12 @@ builder.Services.AddEmailSender(options =>
     options.FromAddr = builder.Configuration["Email:FromAddr"];
 });
 
+// 注册 NewtonsoftJson 服务
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
  {
      options.SerializerSettings.ContractResolver = new DefaultContractResolver();
      options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
-     options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+     options.SerializerSettings.DateFormatString = "yyyy-MM-dd";
      options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
  });
 builder.Services.AddEndpointsApiExplorer();
@@ -35,12 +45,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEmailCertificateCacheService,EmailCertificateCacheService>();
 builder.Services.AddSingleton<IPasswordEncryptionService,PasswordEncryptionService>();
 builder.Services.AddSingleton<IRSAServiceDependencyInjection,RSAPemServiceDependencyInjection>();
-
-// Add EF Core services to the services container.
-builder.Services.AddDbContext<DBContext>(
-    options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnection"))
-);
 
 // Add AutoMapper services.
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -81,20 +85,45 @@ builder.Services.AddSingleton<IJwtService,JwtService>();
 
 var app = builder.Build();
 
+// EF Core 数据库迁移
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DBContext>();
+    db.Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// 暂时不启用 HTTPS.
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseCors("AllowAny");
 
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseFileServer(new FileServerOptions
+{
+    RequestPath = "",
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(),"wwwroot")),
+    EnableDefaultFiles = true,
+    StaticFileOptions =
+    {
+        ContentTypeProvider = new FileExtensionContentTypeProvider
+        {
+            Mappings =
+            {
+                [".opus"] = "audio/ogg",
+                [".lrc"] = "text/plain"
+            }
+        }
+    }
+});
 
 app.MapControllers();
 

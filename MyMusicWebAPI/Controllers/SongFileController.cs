@@ -23,7 +23,7 @@ public class SongFileController : ControllerBase
     }
 
     [HttpGet("{SongFileName}")]
-    public async Task<IActionResult> GetSongs(string SongFileName)
+    public IActionResult GetSongs(string SongFileName)
     {
         try
         {
